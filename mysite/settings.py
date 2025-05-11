@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-jxx!y_pw(ytl=_ad@vj6oum-i+ez4wr4+_o9v$h$vujq5&*r$3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["eventticketing-sqxs.onrender.com", "localhost", "127.0.0.1:8000"]
 
 
 # Application definition

@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Buy Ticket</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h3 class="card-title text-center mb-4">Buy Ticket for <span class="text-primary">{{ event.name }}</span></h3>
+                    <form id="ticketForm" method="POST" action="{% url 'process_ticket_order' event.id %}">
+                        {% csrf_token %}
+
+                        <!-- Ticket Type -->
+                        <div class="mb-3">
+                            <label for="ticketType" class="form-label">Select Ticket Type:</label>
+                            <select id="ticketType" name="ticket_type" class="form-select" required>
+                                <option value="" disabled selected>Select a type</option>
+                                <option value="Normal" data-price="{{ event.normal_price }}">Normal - GHS {{ event.normal_price }}</option>
+                                <option value="VIP" data-price="{{ event.vip_price }}">VIP - GHS {{ event.vip_price }}</option>
+                                <option value="VVIP" data-price="{{ event.vvip_price }}">VVIP - GHS {{ event.vvip_price }}</option>
+                            </select>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity:</label>
+                            <input type="number" name="quantity" id="quantity" class="form-control" min="1" value="1" required>
+                        </div>
+
+                        <!-- Buyer Email -->
+                        <div class="mb-3">
+                            <label for="buyer_email" class="form-label">Your Email (to receive tickets):</label>
+                            <input type="email" name="buyer_email" id="buyer_email" class="form-control" placeholder="e.g. you@example.com" required>
+                        </div>
+
+                        <!-- Buyer Contact -->
+                        <div class="mb-3">
+                            <label for="buyer_contact" class="form-label">Your Phone Number:</label>
+                            <input type="text" name="buyer_contact" id="buyer_contact" class="form-control" placeholder="e.g. 0241234567" required>
+                        </div>
+
+                        <!-- Ticket Delivery Option -->
+                        <div class="mb-3">
+                            <label class="form-label">Ticket Delivery Option:</label><br>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="delivery_option" id="delivery_main" value="main" checked>
+                                <label class="form-check-label" for="delivery_main">
+                                    Send all tickets to my email only
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="delivery_option" id="delivery_all" value="all">
+                                <label class="form-check-label" for="delivery_all">
+                                    Send each ticket to individual recipient
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Extra Contacts -->
+                        <div id="extraContactsContainer" class="mb-3"></div>
+
+                        <!-- Total -->
+                        <div class="mb-3">
+                            <label class="form-label">Total Cost:</label>
+                            <div class="fw-bold fs-5 text-success" id="totalAmount">GHS 0.00</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2">Continue to Payment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JS Logic -->
+<script>
+    const ticketType = document.getElementById('ticketType');
+    const quantity = document.getElementById('quantity');
+    const totalAmount = document.getElementById('totalAmount');
+    const extraContactsContainer = document.getElementById('extraContactsContainer');
+
+    function updateTotal() {
+        const selected = ticketType.options[ticketType.selectedIndex];
+        const price = parseFloat(selected.getAttribute('data-price') || 0);
+        const qty = parseInt(quantity.value) || 1;
+        const total = price * qty;
+        totalAmount.textContent = `GHS ${total.toFixed(2)}`;
+    }
+
+    function renderExtraContactFields() {
+        const qty = parseInt(quantity.value);
+        const selectedDelivery = document.querySelector('input[name="delivery_option"]:checked').value;
+
+        extraContactsContainer.innerHTML = '';
+
+        if (qty > 1 && selectedDelivery === 'all') {
+            const label = document.createElement('label');
+            label.textContent = "Enter email for other recipients:";
+            label.classList.add("form-label");
+            extraContactsContainer.appendChild(label);
+
+            for (let i = 1; i < qty; i++) {
+                const input = document.createElement('input');
+                input.type = 'email';
+                input.name = 'recipients';
+                input.className = 'form-control mb-2';
+                input.placeholder = `Email for ticket #${i + 1}`;
+                extraContactsContainer.appendChild(input);
+            }
+        }
+    }
+
+    ticketType.addEventListener('change', updateTotal);
+    quantity.addEventListener('input', () => {
+        updateTotal();
+        renderExtraContactFields();
+    });
+
+    document.querySelectorAll('input[name="delivery_option"]').forEach(el => {
+        el.addEventListener('change', renderExtraContactFields);
+    });
+
+    updateTotal(); // initialize on load
+    renderExtraContactFields();
+</script>
+
+</body>
+</html>

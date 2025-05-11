@@ -1,0 +1,172 @@
+{% extends 'home/all_tickets_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-graph-up me-2"></i>Ticket Analytics
+        </h2>
+        <a href="{% url 'all_tickets' %}" class="btn btn-outline-primary">
+            <i class="bi bi-list-ul me-1"></i> View Tickets
+        </a>
+    </div>
+
+    <!-- Error Alert -->
+    <div id="chartError" class="alert alert-danger d-none mb-4">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span id="errorMessage"></span>
+    </div>
+
+    <!-- Data Status Card -->
+    <div class="card mb-4 {% if has_data %}d-none{% endif %}">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-database-exclamation" style="font-size: 3rem; color: #6c757d;"></i>
+            <h5 class="mt-3">No Ticket Data Available</h5>
+            <p class="text-muted">The charts will appear when ticket data exists</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div id="dashboardContent" class="{% if not has_data %}d-none{% endif %}">
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <!-- Cards content remains the same -->
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row">
+            <!-- Ticket Type Chart -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Ticket Types</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" style="position: relative; height: 300px;">
+                            <canvas id="ticketTypeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Chart -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Event Revenue</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" style="position: relative; height: 300px;">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<!-- Chart.js Implementation -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        // Parse data safely
+        const normal = parseInt('{{ normal_count|default:"0" }}') || 0;
+        const vip = parseInt('{{ vip_count|default:"0" }}') || 0;
+        const vvip = parseInt('{{ vvip_count|default:"0" }}') || 0;
+        const eventData = JSON.parse('{{ event_revenue_json|escapejs }}' || '[]');
+
+        console.log('Chart data loaded:', {
+            tickets: {normal, vip, vvip},
+            events: eventData
+        });
+
+        // 1. Ticket Type Chart
+        const typeCtx = document.getElementById('ticketTypeChart');
+        if (typeCtx) {
+            new Chart(typeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Normal', 'VIP', 'VVIP'],
+                    datasets: [{
+                        data: [normal, vip, vvip],
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.8)',
+                            'rgba(0, 123, 255, 0.8)',
+                            'rgba(255, 193, 7, 0.8)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // 2. Revenue Chart
+        const revCtx = document.getElementById('revenueChart');
+        if (revCtx && eventData.length > 0) {
+            new Chart(revCtx, {
+                type: 'bar',
+                data: {
+                    labels: eventData.map(e => e.name),
+                    datasets: [{
+                        label: 'Revenue (GHS)',
+                        data: eventData.map(e => e.revenue),
+                        backgroundColor: 'rgba(40, 167, 69, 0.6)',
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'GHS ' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error('Chart initialization error:', error);
+        document.getElementById('errorMessage').textContent = 
+            'Failed to load charts: ' + error.message;
+        document.getElementById('chartError').classList.remove('d-none');
+    }
+});
+</script>
+
+<noscript>
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        JavaScript is required to view the charts. Please enable JavaScript in your browser.
+    </div>
+</noscript>
+{% endblock content %}

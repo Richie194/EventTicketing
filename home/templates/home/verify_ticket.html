@@ -1,0 +1,32 @@
+{% extends 'home/base4.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Verify Ticket</h2>
+    <form method="post" class="mb-3">
+        {% csrf_token %}
+        <div class="input-group">
+            <input type="text" name="code" class="form-control" placeholder="Enter Ticket Code" required>
+            <button type="submit" class="btn btn-primary">Verify</button>
+        </div>
+    </form>
+
+    {% if status %}
+        <div class="alert alert-{{ color }}">
+            {{ status }}
+        </div>
+    {% endif %}
+
+    {% if ticket %}
+    <div class="card mt-3">
+        <div class="card-header">Ticket Details</div>
+        <div class="card-body">
+            <p><strong>Code:</strong> {{ ticket.code }}</p>
+            <p><strong>Recipient Email:</strong> {{ ticket.recipient_email }}</p>
+            <p><strong>Event:</strong> {{ ticket.event.name }}</p>
+            <p><strong>Ticket Type:</strong> {{ ticket.ticket_type }}</p>
+            <p><strong>Date Issued:</strong> {{ ticket.date_issued }}</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

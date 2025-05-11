@@ -1,0 +1,345 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Create an amazing event">
+    <meta name="author" content="">
+
+    <title>Create Event</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Custom styles -->
+    <link href="{% static 'home/css/sb-admin-2.min.css' %}" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --dark-color: #2d3436;
+            --light-color: #f9f9f9;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            min-height: 100vh;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .bg-register-image {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url("{% static 'home/img/event-bg.jpg' %}");
+            background-position: center;
+            background-size: cover;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .bg-register-image::before {
+            content: "Create Your Dream Event";
+            color: white;
+            font-size: 2rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .form-control-user {
+            border-radius: 10px !important;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .form-control-user:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.25);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-color);
+            font-size: 0.95rem;
+        }
+        
+        textarea.form-control {
+            border-radius: 10px !important;
+            min-height: 120px;
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary:hover {
+            background-color: #5a4bd6;
+            border-color: #5a4bd6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 2rem !important;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 4px;
+            background: var(--accent-color);
+            bottom: -10px;
+            left: 25%;
+            border-radius: 2px;
+        }
+        
+        .price-inputs .form-control-user {
+            background-color: rgba(162, 155, 254, 0.1);
+            border-color: var(--secondary-color);
+        }
+        
+        .price-inputs .form-control-user:focus {
+            border-color: var(--primary-color);
+        }
+        
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed var(--secondary-color);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background-color: rgba(162, 155, 254, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload:hover {
+            background-color: rgba(162, 155, 254, 0.1);
+            border-color: var(--primary-color);
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .file-upload-label i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+        
+        hr {
+            border-top: 2px solid rgba(108, 92, 231, 0.2);
+            margin: 2rem 0;
+        }
+        
+        .animate-form {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-primary">
+    <div class="container">
+        <div class="card o-hidden border-0 shadow-lg my-5 animate__animated animate__fadeIn">
+            <div class="card-body p-0">
+                <div class="row">
+                    <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+                    <div class="col-lg-7">
+                        <div class="p-5 animate-form">
+                            <div class="text-center">
+                                <h1 class="h4 mb-4">
+                                    <i class="fas fa-calendar-plus me-2"></i>Create Event
+                                </h1>
+                            </div>
+                            <form class="user" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                
+                                <div class="form-group">
+                                    <label>Event Name</label>
+                                    <input type="text" class="form-control form-control-user" name="eventName" 
+                                           placeholder="Enter your event name" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Date & Time</label>
+                                    <input type="datetime-local" class="form-control form-control-user" 
+                                           name="eventDateTime" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Location</label>
+                                    <input type="text" class="form-control form-control-user" name="eventLocation" 
+                                           placeholder="Where will it take place?" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Ticket Prices</label>
+                                    <div class="row g-3 price-inputs">
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control form-control-user" name="ticketNormal" 
+                                                   placeholder="Normal (GHS)" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control form-control-user" name="ticketVIP" 
+                                                   placeholder="VIP (GHS)" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control form-control-user" name="ticketVVIP" 
+                                                   placeholder="VVIP (GHS)" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Total Tickets Available</label>
+                                    <input type="number" class="form-control form-control-user" name="totalTickets" 
+                                           placeholder="How many tickets can be sold?" min="1" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Promotion Terms</label>
+                                    <textarea class="form-control" name="promotionTerms" 
+                                              placeholder="Enter terms and conditions for promotions" rows="3"></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Promotion Message</label>
+                                    <textarea class="form-control" name="promotionMessage" 
+                                              placeholder="What message should buyers receive?" rows="3"></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Event Banner/Flyer</label>
+                                    <div class="file-upload">
+                                        <label class="file-upload-label">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <span>Drag & drop your banner here or click to browse</span>
+                                            <small class="text-muted mt-2">Recommended: 1200×600px JPG/PNG (Max 5MB)</small>
+                                        </label>
+                                        <input type="file" name="eventBanner" accept="image/*" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-4 g-3">
+                                    <div class="col-md-6">
+                                        <a href="{% url 'index2' %}" class="btn btn-outline-danger btn-user btn-block">
+                                            <i class="fas fa-times-circle me-2"></i> Cancel
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button type="submit" class="btn btn-primary btn-user btn-block">
+                                            <i class="fas fa-plus-circle me-2"></i> Create Event
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Add animation class when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.animate-form');
+            form.classList.add('animate__animated', 'animate__fadeInUp');
+            
+            // File upload styling
+            const fileInput = document.querySelector('input[type="file"]');
+            fileInput.addEventListener('change', function(e) {
+                const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+                const label = document.querySelector('.file-upload-label span');
+                label.textContent = fileName;
+            });
+        });
+    </script>
+</body>
+</html>

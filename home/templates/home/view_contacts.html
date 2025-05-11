@@ -1,0 +1,51 @@
+
+{% extends 'home/view_contacts_base2.html' %}
+{% block title %}Contact Messages{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-lg rounded-4 border-0">
+        <div class="card-header bg-primary text-white py-3 rounded-top-4 text-center">
+            <h4 class="mb-0">📨 Contact Messages</h4>
+        </div>
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover align-middle">
+                    <thead class="table-primary text-center">
+                        <tr>
+                            <th class="text-center">👤 Name</th>
+                            <th class="text-center">✉️ Email</th>
+                            <th class="text-center">📌 Subject</th>
+                            <th class="text-center">📝 Message</th>
+                            <th class="text-center">⏰ Sent At</th>
+                            <th class="text-center">⚙️ Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for msg in messages %}
+                        <tr class="text-center">
+                            <td>{{ msg.name }}</td>
+                            <td><a href="mailto:{{ msg.email }}">{{ msg.email }}</a></td>
+                            <td>{{ msg.subject }}</td>
+                            <td>{{ msg.message|truncatechars:50 }}</td>
+                            <td>{{ msg.timestamp|date:"M d, Y - H:i" }}</td>
+                            <td>
+                                <a href="mailto:{{ msg.email }}" class="btn btn-sm btn-success mb-1">Reply</a>
+
+                                <form method="POST" action="{% url 'delete_message' msg.id %}" onsubmit="return confirm('Are you sure you want to delete this message?');">
+                                    {% csrf_token %}
+                                    <button class="btn btn-sm btn-danger">🗑️ Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No messages found. ✉️</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

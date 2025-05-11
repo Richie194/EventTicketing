@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Event Management{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #f8f9fc;
+            --accent-color: #2e59d9;
+            --text-dark: #5a5c69;
+        }
+        
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .navbar {
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            background: white;
+            padding: 0.75rem 1rem;
+        }
+        
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .page-container {
+            padding: 2rem 0;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            border-radius: 0.35rem 0.35rem 0 0 !important;
+            padding: 1rem 1.35rem;
+        }
+        
+        .table {
+            --bs-table-bg: transparent;
+            --bs-table-striped-bg: rgba(78, 115, 223, 0.05);
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.65rem;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+            padding: 1rem;
+        }
+        
+        .table tbody td {
+            padding: 0.75rem 1rem;
+            vertical-align: middle;
+            border-top: 1px solid #e3e6f0;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.08);
+        }
+        
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+        }
+        
+        .ticket-type {
+            font-weight: 600;
+        }
+        
+        .ticket-type.normal {
+            color: #1cc88a;
+        }
+        
+        .ticket-type.vip {
+            color: #36b9cc;
+        }
+        
+        .ticket-type.vvip {
+            color: #f6c23e;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .summary-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .summary-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+        
+        .filter-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'index2' %}">
+            <i class="bi bi-ticket-perforated-fill"></i>
+            <span>Event Manager Pro</span>
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index2' %}">
+                        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'charts' %}">
+                        <i class="bi bi-bar-chart me-1"></i> Analytics
+                    </a>
+                </li>
+                <!-- Add more navigation items as needed -->
+                <li class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <a href="{% url 'report' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                            class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <!-- Page Content -->
+    <div class="container page-container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

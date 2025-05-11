@@ -1,0 +1,53 @@
+{% extends 'home/report_pdf_base.html' %}
+
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th width="18%">Event</th>
+            <th width="10%">Date</th>
+            <th width="6%">Normal</th>
+            <th width="6%">VIP</th>
+            <th width="6%">VVIP</th>
+            <th width="7%">Total Sold</th>
+            <th width="8%">Remaining</th>
+            <th width="10%">Normal Revenue</th>
+            <th width="10%">VIP Revenue</th>
+            <th width="10%">VVIP Revenue</th>
+            <th width="9%">Total Revenue</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in report_data %}
+        <tr class="{% cycle '' 'highlight' %}">
+            <td class="text-left">{{ item.event.name }}</td>
+            <td>{{ item.event.date_time|date:"M d, Y H:i" }}</td>
+            <td>{{ item.normal_tickets }}</td>
+            <td>{{ item.vip_tickets }}</td>
+            <td>{{ item.vvip_tickets }}</td>
+            <td>{{ item.total_sold }}</td>
+            <td>{{ item.remaining }}</td>
+            <td class="text-right">GHS {{ item.normal_revenue|floatformat:2 }}</td>
+            <td class="text-right">GHS {{ item.vip_revenue|floatformat:2 }}</td>
+            <td class="text-right">GHS {{ item.vvip_revenue|floatformat:2 }}</td>
+            <td class="text-right"><strong>GHS {{ item.total_revenue|floatformat:2 }}</strong></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="11" class="text-center">No events found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr class="total-row">
+            <td colspan="5" class="text-right"><strong>Overall Totals:</strong></td>
+            <td><strong>{{ overall.total_sold }}</strong></td>
+            <td>-</td>
+            <td class="text-right"><strong>GHS {{ overall.normal_revenue|floatformat:2 }}</strong></td>
+            <td class="text-right"><strong>GHS {{ overall.vip_revenue|floatformat:2 }}</strong></td>
+            <td class="text-right"><strong>GHS {{ overall.vvip_revenue|floatformat:2 }}</strong></td>
+            <td class="text-right"><strong>GHS {{ overall.total_revenue|floatformat:2 }}</strong></td>
+        </tr>
+    </tfoot>
+</table>
+{% endblock %}

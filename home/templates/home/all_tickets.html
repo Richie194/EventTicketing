@@ -1,0 +1,176 @@
+{% extends 'home/all_tickets_base.html' %}
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-ticket-detailed me-2"></i>All Tickets Purchased
+        </h2>
+        <div>
+            <span class="badge bg-primary">Total Tickets: {{ total_tickets_sold }}</span>
+            <span class="badge bg-success ms-2">Revenue: GHS {{ total_revenue|floatformat:2 }}</span>
+        </div>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold navbar-light">Filters</h6>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Filter by Event</label>
+                    <select name="event" class="form-select">
+                        <option value="">All Events</option>
+                        {% for event in events %}
+                            <option value="{{ event.id }}" {% if event.id|stringformat:"s" == selected_event %}selected{% endif %}>
+                                {{ event.name }} ({{ event.date_time|date:"M d" }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Search by Email</label>
+                    <div class="input-group">
+                        <input type="text" name="email" value="{{ email_query }}" class="form-control" placeholder="Recipient email">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Ticket Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold navbar-light">Ticket Records</h6>
+            <span class="badge bg-info">{{ tickets.count }} records found</span>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Event</th>
+                            <th>Recipient Email</th>
+                            <th>Type</th>
+                            <th>Ticket Code</th>
+                            <th class="text-end">Price (GHS)</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <strong>{{ ticket.event.name }}</strong>
+                                <div class="text-muted small">{{ ticket.event.date_time|date:"M d, Y" }}</div>
+                            </td>
+                            <td>{{ ticket.recipient_email }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if ticket.ticket_type == 'Normal' %}bg-success
+                                    {% elif ticket.ticket_type == 'VIP' %}bg-primary
+                                    {% elif ticket.ticket_type == 'VVIP' %}bg-warning text-dark
+                                    {% endif %}">
+                                    {{ ticket.ticket_type }}
+                                </span>
+                            </td>
+                            <td><code>{{ ticket.code }}</code></td>
+                            <td class="text-end fw-bold">
+                                {% if ticket.ticket_type == "Normal" %}
+                                    {{ ticket.event.normal_price|floatformat:2 }}
+                                {% elif ticket.ticket_type == "VIP" %}
+                                    {{ ticket.event.vip_price|floatformat:2 }}
+                                {% elif ticket.ticket_type == "VVIP" %}
+                                    {{ ticket.event.vvip_price|floatformat:2 }}
+                                {% endif %}
+                            </td>
+                            <td>{{ ticket.date_issued|date:"M d, Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                <i class="bi bi-info-circle me-2"></i> No tickets found
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="bi bi-graph-up me-2"></i>Revenue Summary
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <tbody>
+                                {% for event, revenue in event_revenue.items %}
+                                <tr>
+                                    <td>{{ event }}</td>
+                                    <td class="text-end fw-bold">GHS {{ revenue|floatformat:2 }}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr class="table-active">
+                                    <th>Total Revenue</th>
+                                    <th class="text-end">GHS {{ total_revenue|floatformat:2 }}</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="bi bi-ticket-detailed me-2"></i>Ticket Summary
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th class="text-center">Normal</th>
+                                    <th class="text-center">VIP</th>
+                                    <th class="text-center">VVIP</th>
+                                    <th class="text-center">Remaining</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stat in ticket_stats %}
+                                <tr>
+                                    <td>{{ stat.event }}</td>
+                                    <td class="text-center">{{ stat.normal_sold }}</td>
+                                    <td class="text-center">{{ stat.vip_sold }}</td>
+                                    <td class="text-center">{{ stat.vvip_sold }}</td>
+                                    <td class="text-center">{{ stat.tickets_left }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
